@@ -8,30 +8,32 @@ In this article, I'll provide an overview of Polygraph and show how to develop a
 
 ## Overview
 
-Nx Polygraph is part of the enterprise version of Nx Cloud, the commercial extension of the popular open source solution Nx for managing workspaces. Polygraph currently consists of three features, accessible directly from the Nx Cloud Dashboard:
+Nx Polygraph is part of the [enterprise version of Nx Cloud](https://nx.dev/enterprise), the commercial extension of the popular open-source solution Nx for managing workspaces. Polygraph currently consists of three features, accessible directly from the Nx Cloud Dashboard:
 
-- Workspace Graph: Visualizes dependencies between different repositories
-- Conformance : Manages cross-repo conformance rules and informs about rule violations
-- Custom Workflows: Manages batch runs that collect information about the workspace graph or check connected repos for compliance with conformance rules
+- **Workspace Graph:** Visualizes dependencies between different repositories
+- **Conformance:** Manages cross-repo conformance rules and informs about rule violations
+- **Custom Workflows:** Manages batch runs that collect information about the workspace graph or check connected repos for compliance with conformance rules
 
 ![The Nx Cloud Dashboard presents the capabilities of Nx Polygraph](./dashboard.png)
 
-To connect an Nx workspace to the cloud, use the statement
+To connect an Nx workspace to [Nx Cloud](https://nx.dev/nx-cloud), use the statement
 
 ```bash
 npx nx connect
 ```
 
-Alternatively, you can specify that you want to use the Nx Cloud when setting up your workspace.
+Alternatively, 
 
+- you can specify that you want to use Nx Cloud when setting up your workspace with `create-nx-workspace`
+- Go to https://cloud.nx.app/get-started/ to create a new workspace or connect an existing one
 
-By activating an option during creation or by using the following command, you can also generate a build script for the CI environment:
+You can also generate a build script for the CI environment:
 
 ```bash
 npx nx g ci-workflow
 ```
 
-The workspace must then be checked into source code management and added to your organization in the Nx Cloud Portal:
+The workspace must then be checked into source code management (e.g. GitHub) and added to your organization in the Nx Cloud Portal:
 
 <img src="./add-workspace.png" alt="Add Nx Workspace to the organization in the Nx Cloud" width="300" style="max-width:300px">
 
@@ -39,15 +41,15 @@ The workspace must then be checked into source code management and added to your
 
 The workspace graph shows how the individual repos are connected. You can drill into the individual connected repos and see the applications and libraries managed there, as well as their dependencies. Dependencies between repos are npm packages that originate from one repo and are consumed by other repos.
 
-For example, the following screenshot shows that _project-a_ and _project-b_ are located in different repos. However, the latter uses the _calc_ library from _project-a_ , which was deployed via an npm registry:
+For example, the following screenshot shows that _project-a_ and _project-b_ are located in different repos. However, the latter uses the _calc_ library from _project-a_, which was deployed via an npm registry:
 
 ![The workspace graph shows that project -b accesses the calc library from another repo](./workspace-graph.png)
 
-Nx automatically collects the information for the Workspace Graph when Nx (e.g., _nx build_ or _nx run-many_) is executed as part of a build script in a CI environment.
+Nx automatically collects the information for the Workspace Graph when Nx (e.g., _nx build_ or _nx run-many_) is executed as part of a build script in a CI environment, thus guaranteeing an **always up to date representation of your dependencies** even across repository boundaries.
 
 ## Conformance
 
-The Conformance Dashboard provides information about whether the connected repos comply with the configured rules. The following image, for example, shows four projects in my demo organization and three conformance rules. Unfortunately, _project -b does_ not comply with the first one:
+The Conformance Dashboard provides information about whether the connected repos comply with the configured rules. The following image, for example, shows four projects in my demo organization and three conformance rules. Unfortunately, _project-b does_ not comply with the first one:
 
 ![Conformance Dashboard shows rule violations](./conformance-dashboard.png)
 
@@ -100,7 +102,7 @@ export type AngularVersionConformanceOptions = {
 };
 ```
 
-For simplicity, I created this type manually. For larger projects, it is recommended to generate such types. Npm packages such as _json -schema-to-typescript_ can be used for this purpose.
+For simplicity, I created this type manually. For larger projects, it is recommended to generate such types. Npm packages such as _json-schema-to-typescript_ can be used for this purpose.
 
 The _index.ts_ file publishes the conformance rule based on it as a _default export_. It is configured with _createConformanceRule_ and receives metadata such as name, category, and description.
 
@@ -167,12 +169,12 @@ Expected: ${version}; found: ${deps[dep]}.`,
 }
 ```
 
-This is primarily for illustrative purposes. In practice, you would also need to check for _devDependencies_ like _@angular/build_, as well as other packages that interact with the respective Angular but have different versions themselves. Examples include Nx itself and component libraries.
+This is primarily for illustrative purposes. In practice, you would also need to check for _devDependencies_ like _@angular/build_, as well as other packages that interact with the respective Angular core packages but have different versions themselves. Examples include Nx itself and component libraries.
 
 
 ## Trying out a Conformance Rule
 
-To try out the conformance rule locally, it must be registered in your workspace's _nx.json:
+To try out the conformance rule locally, it must be registered in your workspace's _nx.json_:
 
 ```json
 {
@@ -195,12 +197,12 @@ The _rule_ property points to the directory containing _index.ts_, and _options_
 To execute the registered rules in the local project, simply call
 
 ```sh
-_npx nx conformance check_
+npx nx conformance check
 ```
 
-## Providing a Conformance Rule
+## Publishing a Conformance Rule
 
-In order for the rule to be configured in the Nx Cloud for the connected projects, it must be deployed. For security reasons, a Personal Access Token must be set up in the project containing the rules. This token can be obtained in the Nx Cloud in the profile area of the respective user:
+In order for the rule to be configured in the Nx Cloud for the connected projects, it must be deployed. For security reasons, a [Personal Access Token](https://nx.dev/ci/recipes/security/personal-access-tokens) must be set up in the project containing the rules. This token can be obtained in the Nx Cloud in the profile area of the respective user:
 
 <img src="./profile.png" alt="Link to profile area of the current user" width="300" style="max-width:300px !important">
 
